@@ -1,4 +1,7 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
 
 const userSchema = mongoose.Schema({
     uName:{
@@ -28,6 +31,24 @@ const userSchema = mongoose.Schema({
     uTokenExp:{
         type: Number,
     },
+})
+
+userSchema.pre('save', function( next ){
+     let user =  this;   
+
+    if(user.isModified('uPassword')){
+        //비밀번호 암호화
+        bcrypt.genSalt(saltRounds, function(err, salt){
+            if(err) return next(err)
+    
+            bcrypt.hash( user.uPassword,salt, function(err,hash){
+                if(err) return next(err)
+                user.uPassword = hash
+                next()
+            })
+        })
+    }
+    
 })
 
 const User = mongoose.model( 'User', userSchema)
