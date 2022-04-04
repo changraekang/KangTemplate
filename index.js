@@ -2,7 +2,6 @@ const express  = require('express')
 const mongoose  = require("mongoose");
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-
 const app      = express()
 const port     = 5000
 
@@ -10,7 +9,10 @@ const config = require('./config/key');
 
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
+app.use(cookieParser());
+
 const { User } = require('./models/User');
+const { auth } = require('./middleware/auth');
 
  mongoose
    .connect(config.MongoURI, {
@@ -23,7 +25,7 @@ const { User } = require('./models/User');
 
  app.get('/',(req, res) => res.send('Hello World!!'))
 
- app.post('/register', (req, res) => {
+ app.post('/api/user/register', (req, res) => {
 
     const user = new User(req.body)
 
@@ -35,7 +37,7 @@ const { User } = require('./models/User');
     })
 
  })
- app.post('/login', (req, res) => {
+ app.post('/api/user/login', (req, res) => {
 
     //요청된 email을 DB에서 조회한다
     User.findOne({ uEmail: req.body.uEmail} , (err,user) => {
@@ -65,11 +67,29 @@ const { User } = require('./models/User');
       });
 
     })
-
-
-
-   
  })
+
+
+
+ /**
+  * role 1 admin, role 2 특정부서 admin
+  * role 0 일반유저 role 0이 아니면 관리자
+  */
+app.get('/api/user/auth', auth , (req,res) => {
+
+  // 여기까지 middleware를 통과한것은 인증을 한 ID
+
+  res.status(200).json({
+    _id: req.user._id,
+    isAdmin: req.user.role === 0 ? false: true, // 정책에 따라 변경 가능
+
+
+
+  })
+
+
+})
+
 
 
  app.listen(port, ()=> console.log(`Example app listening on port ${port}!`))
