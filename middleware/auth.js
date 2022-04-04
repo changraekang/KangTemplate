@@ -5,14 +5,14 @@ let auth= (req, res, next) => {
     //인증처리
 
     // client cookie에서 get token
-    let token = req.cookeis.x_auth;
+    let uToken = req.cookies.x_auth;
 
     // token decode 후 find userID
-    User.findByToken( token, (err, user) => {
+    User.findByToken( uToken, (err, user) => {
         if(err) throw err;
         if(!user) return res.json ({ isAuth: false, error: true})
 
-        req.token = token;
+        req.uToken = uToken;
         req.user = user;
         next();
     })

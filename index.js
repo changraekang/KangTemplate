@@ -60,7 +60,7 @@ const { auth } = require('./middleware/auth');
           if (err) return res.status(400).send(err);
           // 토큰을 저장한다. 어디에?
           res
-            .cookie("x_auth", user.token)
+            .cookie("x_auth", user.uToken)
             .status(200)
             .json({ loginSuccess: true, userId: user._id });
         });
@@ -82,6 +82,11 @@ app.get('/api/user/auth', auth , (req,res) => {
   res.status(200).json({
     _id: req.user._id,
     isAdmin: req.user.role === 0 ? false: true, // 정책에 따라 변경 가능
+    isAuth: true,
+    uEmail: req.user.uEmail,
+    uName: req.user.uName,
+    uRole: req.user.uRole,
+    uImage: req.user.uImage
 
 
 
@@ -90,6 +95,19 @@ app.get('/api/user/auth', auth , (req,res) => {
 
 })
 
+app.get('/api/user/logout', auth, (req,res) => {
+
+  User.findByIdAndUpdate({ _id: req.user._id},
+    {uToken: ''},
+    (err, user) => {
+      if (err) return res.json({ success: false, err});
+      return res.status(200).send({
+        success: true
+      })
+    }
+    )
+
+})
 
 
  app.listen(port, ()=> console.log(`Example app listening on port ${port}!`))

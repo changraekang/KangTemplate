@@ -29,6 +29,9 @@ const userSchema = mongoose.Schema({
     uImage:{
         type: String,
     },
+    uToken:{
+        type: String,
+    },
     uTokenExp:{
         type: Number,
     },
@@ -64,11 +67,11 @@ userSchema.methods.generateToken = function(cb){
     let user = this;
 
     //jsonwebtoken이용
-    let token =jwt.sign(user._id.toHexString(),'secretToken')
+    let uToken =jwt.sign(user._id.toHexString(),'secretToken')
 
 
 
-    user.token = token
+    user.uToken = uToken
     user.save(function(err, user) {
         if(err) return cb(err)
         cb(null, user)
@@ -77,15 +80,15 @@ userSchema.methods.generateToken = function(cb){
 }
 
 
-userSchema.statics.findByToken  = function(token, cb) {
+userSchema.statics.findByToken  = function(uToken, cb) {
     let user = this;
 
      // token decode 하기 복호화   
-    jwt.verify(token, 'secretToken', function( err, decoded) {
+    jwt.verify(uToken, 'secretToken', function( err, decoded) {
         //User ID 이용해서 User를 찾은 다음에
         //Client에서 가져 온 token과 DB에 저장된 token을 비교
 
-        user.findOne({"_id" : decoded, "token" : token} , function(err, user) {
+        user.findOne({"_id" : decoded, "uToken" : uToken} , function(err, user) {
             if (err) return cb(err);
             cb( null, user)
 
