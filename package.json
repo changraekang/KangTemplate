@@ -2,7 +2,7 @@
   "name": "template",
   "version": "1.0.0",
   "description": "basic templates",
-  "main": "index.js",
+  "main": "./server/index.js",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",

@@ -24,6 +24,9 @@ const { auth } = require('./middleware/auth');
 
 
  app.get('/',(req, res) => res.send('Hello World!!'))
+ app.get('/api/hello',(req, res) =>{
+     res.send('Hello World2')
+    })
 
  app.post('/api/user/register', (req, res) => {
 
