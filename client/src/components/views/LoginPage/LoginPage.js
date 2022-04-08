@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
-import Axios from 'axios'
 import { useDispatch } from 'react-redux';
-import { loginUser } from '../../../_actions/user_action';
-import { withRouter } from 'react-router-dom';
+import { loginUser } from "../../../_action/user_action";
+import { useNavigate } from 'react-router-dom';
+
 function LoginPage(props) {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+
 
     const [Email, setEmail] = useState("")
     const [Password, setPassword] = useState("")
@@ -21,15 +23,17 @@ function LoginPage(props) {
         event.preventDefault();
 
         let body = {
-            email: Email,
-            password: Password
+            uEmail: Email,
+            uPassword: Password
         }
 
         dispatch(loginUser(body))
             .then(response => {
+                console.log(response,"결과")
                 if (response.payload.loginSuccess) {
-                    props.history.push('/')
+                    navigate('/')
                 } else {
+                    console.log(response)
                     alert('Error˝')
                 }
             })
@@ -59,4 +63,4 @@ function LoginPage(props) {
     )
 }
 
-export default withRouter(LoginPage)
+export default LoginPage

@@ -3,7 +3,7 @@ import axios from 'axios'
 const Home = () => {
     useEffect(() => {
         axios.get('/api/hello')
-        .then( response => {console.log(response)})
+        .then( response => {console.log(response.data)})
        }, [])
     /**
      * 
